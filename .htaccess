@@ -1,0 +1,35 @@
+# Configurações para iAgris no HostGator
+RewriteEngine On
+
+# Redirecionar HTTP para HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Configurações para aplicação Node.js
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /app.js [QSA,L]
+
+# Cache para arquivos estáticos
+<filesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2)$">
+  ExpiresActive On
+  ExpiresDefault "access plus 1 year"
+  Header append Cache-Control "public"
+</filesMatch>
+
+# Compressão
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+# Segurança
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options nosniff
+  Header always set X-Frame-Options DENY
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
